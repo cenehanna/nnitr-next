@@ -15,6 +15,7 @@ interface SearchBarProps {
 export default function SearchBar({ isOpen, onClose, locale }: SearchBarProps) {
   const [query, setQuery] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
     if (!isOpen) {
@@ -22,20 +23,27 @@ export default function SearchBar({ isOpen, onClose, locale }: SearchBarProps) {
       return;
     }
 
-    const frame = requestAnimationFrame(() => inputRef.current?.focus());
-    return () => cancelAnimationFrame(frame);
+    // Невелика затримка дозволяє браузеру повністю відобразити (paint) елемент у DOM
+    const timer = setTimeout(() => {
+      inputRef.current?.focus();
+    }, 50);
+
+    return () => clearTimeout(timer);
   }, [isOpen]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (query.trim()) {
-      console.log("Пошуковий запит:", query);
+    const trimmedQuery = query.trim();
+    if (trimmedQuery) {
+      onClose();
+      router.push(`/search?q=${encodeURIComponent(trimmedQuery)}`);
     }
   };
 
   return (
     <div
-      className={`fixed inset-x-0 bottom-0 top-[70px] z-[90] w-full px-2.5 pt-3 transition-all duration-250 ease-out xl:px-0 xl:pt-0 ${
+      /* Змінено transition-all на transition-opacity, щоб visibility не анімувався з затримкою */
+      className={`fixed inset-x-0 bottom-0 top-[70px] z-[90] w-full px-2.5 pt-3 transition-opacity duration-250 ease-out xl:px-0 xl:pt-0 ${
         isOpen
           ? "pointer-events-auto visible opacity-100"
           : "pointer-events-none invisible opacity-0"
@@ -47,7 +55,8 @@ export default function SearchBar({ isOpen, onClose, locale }: SearchBarProps) {
         role="search"
         onSubmit={handleSubmit}
         onClick={(e) => e.stopPropagation()}
-        className={`mx-auto flex w-full items-center bg-white shadow-md transition-all duration-250 ease-out xl:max-w-4xl ${
+        /* Застосовано transition-transform окремо для плавного виїзду форми */
+        className={`mx-auto flex w-full items-center bg-white shadow-md transition-transform duration-250 ease-out xl:max-w-4xl ${
           isOpen
             ? "translate-y-0 scale-100"
             : "-translate-y-2 scale-95"

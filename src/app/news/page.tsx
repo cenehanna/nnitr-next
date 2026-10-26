@@ -9,6 +9,7 @@ import NewsGrid from "@/components/news/NewsGrid";
 import { formatDate } from "@/lib/date";
 import { getNews } from "@/data/news";
 import { getLocale, translate } from "@/lib/i18n";
+import { getCurrentPage, type SearchParams } from "@/lib/pagination";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
@@ -20,11 +21,11 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function NewsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string }>;
+  searchParams: Promise<SearchParams>;
 }) {
   const locale = await getLocale();
   const news = await getNews();
-  const { page } = await searchParams;
+  const params = await searchParams;
 
   // Деструктуризація масиву: змінна main отримує перший елемент (індекс 0).
   // Rest-оператор (...rest): автоматично збирає всі наступні елементи (від індексу 1) у новий масив.
@@ -35,11 +36,7 @@ export default async function NewsPage({
 const ITEMS_PER_PAGE = 12;
 const totalItems = rest.length;
 const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE); 
-const requestedPage = Number(page);
-const currentPage =
-  Number.isInteger(requestedPage) && requestedPage > 0
-    ? Math.min(requestedPage, totalPages)
-    : 1;
+const currentPage = getCurrentPage(params.page, totalPages);
 
 
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -72,7 +69,13 @@ const currentPage =
           </article>
         </Link>
 
-<NewsGrid news={grid} totalPages={totalPages} currentPage={currentPage} />
+<NewsGrid
+  news={grid}
+  totalPages={totalPages}
+  currentPage={currentPage}
+  locale={locale}
+  searchParams={params}
+/>
 
       </main>
 

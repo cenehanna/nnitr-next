@@ -9,6 +9,8 @@ import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import { formatDate } from "@/lib/date";
 import { getLocale, translate } from "@/lib/i18n";
 import { getNews } from "@/data/news";
+import Pagination from "@/components/news/Pagination";
+import { getCurrentPage } from "@/lib/pagination";
 
 interface SearchPageProps {
   searchParams: Promise<{
@@ -26,9 +28,9 @@ export async function generateMetadata({ searchParams }: SearchPageProps): Promi
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
   const locale = await getLocale();
-  const { q = "", page } = await searchParams;
-  const searchQuery = q.trim();
-  const currentPage = Number(page) || 1;
+  const params = await searchParams;
+  const q = params.q;
+  const searchQuery = (Array.isArray(q) ? q[0] : q ?? "").trim();
   const ITEMS_PER_PAGE = 6;
 
   // Отримання та фільтрація новин
@@ -44,7 +46,9 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   // Пагінація
   const totalItems = filteredNews.length;
   const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+  const currentPage = getCurrentPage(params.page, totalPages);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+
   const paginatedNews = filteredNews.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
   return (
@@ -66,20 +70,20 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                 name="q"
                 defaultValue={searchQuery}
                 placeholder="Введіть ключові слова..."
-                className="w-full rounded-full border border-[#e0e0e0] bg-[#f9f9f9] py-3.5 pl-12 pr-5 font-mont text-base text-black outline-none transition focus:border-brand-teal focus:bg-white"
+                className="w-full rounded-[14px] border border-[#e0e0e0] bg-[#f9f9f9] py-3.5 pl-12 pr-5 font-exo text-base text-black outline-none transition focus:border-brand-teal focus:bg-white"
               />
               <MagnifyingGlassIcon className="absolute left-4 top-1/2 size-5 -translate-y-1/2 text-[#888]" />
             </div>
             <button
               type="submit"
-              className="rounded-full bg-brand px-8 py-3.5 font-mont text-base font-semibold text-white transition hover:bg-brand-teal"
+              className="rounded-[14px] bg-brand px-8 py-3.5 font-exo text-base font-semibold text-white transition hover:bg-brand-teal"
             >
               Знайти
             </button>
           </form>
 
           {searchQuery && (
-            <p className="mt-4 font-mont text-base text-[#666]">
+            <p className="mt-4 font-exo text-base text-[#666]">
               За запитом <span className="font-semibold text-black">«{searchQuery}»</span> знайдено результатів:{" "}
               <span className="font-bold text-brand-teal">{totalItems}</span>
             </p>
@@ -139,24 +143,14 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
           )}
         </section>
 
-        {/* 3. Пагінація */}
-        {totalPages > 1 && (
-          <nav className="mt-12 flex items-center justify-center gap-2">
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-              <Link
-                key={p}
-                href={`/search?q=${encodeURIComponent(searchQuery)}&page=${p}#search-results`}
-                className={`flex h-10 w-10 items-center justify-center rounded-full border font-mont text-sm font-medium transition ${
-                  p === currentPage
-                    ? "border-brand-teal bg-brand-teal text-white"
-                    : "border-[#e0e0e0] text-[#333] hover:border-brand-teal hover:text-brand-teal"
-                }`}
-              >
-                {p}
-              </Link>
-            ))}
-          </nav>
-        )}
+
+<Pagination
+  totalPages={totalPages}
+  currentPage={currentPage}
+  locale={locale}
+  searchParams={params}
+  anchor="search-results"
+/>
       </main>
 
       <Footer hoverClass="hover:text-brand-teal" />
