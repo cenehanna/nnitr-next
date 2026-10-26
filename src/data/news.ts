@@ -1,58 +1,31 @@
-// Тимчасові дані замість запитів до бекенду: випадкові фото та текст.
-// Коли з'явиться API — достатньо замінити `news` на результат fetch.
+import { promises as fs } from 'fs';
+import path from 'path';
 
-export type NewsItem = {
+export interface Article {
   id: string;
   title: string;
-  createdAt: string; // ISO
-  imagePath: string;
+  description?: string; // Знак питання означає, що поле необов'язкове
   content: string;
-};
+  imagePath: string;
+  publishedAt: string;
+  category: string;
+  sourceUrl?: string;   
+  imageUrl?: string;    
+}
 
-const images = [
-  "/images/0043.jpg",
-  "/images/image001.jpg",
-  "/images/image001-1.jpg",
-  "/images/image002-1.jpg",
-  "/images/image004-1.jpg",
-  "/images/image007.jpg",
-  "/images/image008.jpg",
-  "/images/DSC_4543.jpg",
-  "/images/photo_20231209_161516.jpg",
-  "/images/4.jpg",
-  "/images/490471278_1284822666701205_7005042070398181357_n.jpg",
-  "/images/651199870_1586445513205584_8192987332260212803_n.jpg",
-  "/images/509422655_1588374748946661_7047098866990699011_n.jpg",
-  "/images/598692618_1503749138425912_6507055229799546670_n.jpg",
-];
+export interface LatestNewsProps {
+  news: Article[];
+}
 
-const titles = [
-  "Академічна мобільність у Берліні",
-  "Нове обладнання для лабораторії робототехніки",
-  "Студенти ІТ інституту здобули перемогу на хакатоні",
-  "Умови вступу на спеціальність 122 «Комп'ютерні науки»",
-  "Оголошено додатковий конкурсний відбір на участь у програмі Erasmus+",
-  "День відкритих дверей у навчально-науковому інституті",
-  "Відкрито нову лабораторію кібербезпеки",
-  "Студенти Політехніки взяли участь у міжнародній конференції",
-];
+export async function getNews(): Promise<Article[]> {
+  // Знаходимо абсолютний шлях до файлу news.json у вашому проєкті
+  const filePath = path.join(process.cwd(), 'src', 'data', 'news.json');
+  
+  // Читаємо вміст файлу
+  const fileContents = await fs.readFile(filePath, 'utf8');
+  
+  // Перетворюємо текст із JSON на звичайний масив JavaScript
+  const news = JSON.parse(fileContents);
 
-const paragraphs = [
-  "Ми впевнені, що впровадження зберігання даних (створення оптимальних товарних груп та відділів) життєво необхідне для розвитку, тому ми постійно виконуємо зобов'язання та разом з тим, відкриті до накопичення.",
-  "Навчання у цьому ЗВО, де особливу увагу приділяють практико-орієнтованому підходу до викладання, дозволить майбутнім фахівцям не лише поглибити свої знання у міжнародному середовищі, а й покращити рівень володіння іноземною мовою.",
-  "Окрім безпосереднього освітнього процесу, перебування за кордоном сприятиме розвитку міжкультурної комунікації та здобуттю цінного життєвого досвіду, який згодом допоможе випускникам почуватися впевнено на сучасному ринку праці.",
-  "Такий досвід стане важливим етапом особистісного зростання та побудови майбутньої кар'єри. Інститут запрошує активних та успішних студентів скористатися цією нагодою та подати заявки на участь.",
-];
-
-// Детермінований «випадковий» вибір, щоб сервер і клієнт рендерили однаково.
-export const news: NewsItem[] = Array.from({ length: 30 }, (_, i) => ({
-  id: String(i + 1),
-  title: titles[(i * 3) % titles.length],
-  createdAt: new Date(Date.UTC(2026, 5, 5 - i)).toISOString(),
-  imagePath: images[(i * 5 + 2) % images.length],
-  content: Array.from({ length: 4 }, (_, j) => paragraphs[(i + j) % paragraphs.length]).join("\n"),
-}));
-
-export function getNewsById(id: string): NewsItem | undefined {
-  return news.find((n) => n.id === id);
+  return news;
 }

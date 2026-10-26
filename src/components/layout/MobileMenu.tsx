@@ -1,7 +1,10 @@
+
 import Link from "next/link";
 import { ChevronDownIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { navItems } from "@/data/navigation";
+import { getNavItems } from "@/data/navigation";
 import type { HeaderVariant } from "./Header";
+import { getLocale, translate } from "@/lib/i18n";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 const styles = {
   dark: {
@@ -20,25 +23,31 @@ const styles = {
   },
 };
 
-/** Повноекранне меню без JS: відкривається через :target, підменю — через checkbox. */
-export default function MobileMenu({ variant = "dark" }: { variant?: HeaderVariant }) {
+/** Full-screen menu opened with :target; submenus use checkboxes. */
+export default async function MobileMenu({ variant = "dark" }: { variant?: HeaderVariant }) {
   const s = styles[variant];
+  const locale = await getLocale();
+  const navItems = getNavItems(locale);
 
   return (
     <div
       id="mobile-menu-overlay"
       className={`fixed left-0 top-0 z-[9999] flex h-screen w-full translate-x-full justify-center overflow-y-auto transition-transform duration-[400ms] ease-in-out target:translate-x-0 ${s.bg} ${s.text}`}
     >
-      <a href="#" aria-label="Закрити" className="absolute right-[25px] top-5">
+      <a href="#" aria-label={translate(locale, "closeMenu")} className="absolute right-[25px] top-5">
         <XMarkIcon aria-hidden="true" className="size-9" />
       </a>
+
+      <div className="absolute bottom-6 right-6 z-10">
+        <LanguageSwitcher locale={locale} variant={variant} />
+      </div>
 
       <nav className="w-full px-[30px] pb-10 pt-20 font-exo">
         <ul>
           {variant === "light" && (
             <li className="mb-[5px]">
               <Link href="/" className={`block border-b py-[15px] text-xl font-semibold ${s.line}`}>
-                ГОЛОВНА
+                {translate(locale, "home").toLocaleUpperCase(locale === "uk" ? "uk-UA" : "en-GB")}
               </Link>
             </li>
           )}

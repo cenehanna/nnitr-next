@@ -1,0 +1,94 @@
+export type Locale = "uk" | "en";
+
+export const messages = {
+  uk: {
+    instituteName: "Навчально-науковий інститут інформаційних технологій та робототехніки",
+    openMenu: "Відкрити меню",
+    closeMenu: "Закрити меню",
+    search: "Пошук",
+    searchInputLabel: "Пошуковий запит",
+    searchPlaceholder: "Введіть пошуковий запит",
+    submitSearch: "Знайти",
+    clearSearch: "Очистити пошуковий запит",
+    back: "Назад",
+    language: "Мова",
+    home: "Головна",
+    news: "Новини",
+    moreNews: "Інші новини",
+    latestNews: "Останні новини",
+    allNews: "Усі новини",
+    backToNews: "Повернутися до новин",
+    newsPagination: "Навігація сторінками новин",
+    moreNewsButton: "Більше новин",
+    previous: "Попередня",
+    next: "Наступна",
+    institute: "Інститут",
+    administration: "Адміністрація інституту",
+    readMore: "Читати далі",
+    academicMobility: "Академічна мобільність",
+    academicMobilityDescription:
+      "Академічна мобільність у Полтавській політехніці — це можливість вийти за межі звичного навчання та відкрити для себе світ. Програми обміну, зокрема Erasmus+, дають змогу студентам безкоштовно навчатися протягом семестру в провідних європейських університетах, зануритися в нове культурне й мовне середовище, знайти друзів з усього світу та здобути цінний практичний досвід для майбутньої кар’єри в ІТ.",
+    heroTitle: "Приєднуйся до покоління інженерів, розробників та новаторів",
+    applyNow: "Подати заявку",
+    specialtyIntro:
+      "Навчально-науковий інститут інформаційних технологій та робототехніки готує висококваліфікованих фахівців для сучасних галузей ІТ, автоматизації, енергетики та транспорту.",
+    specialtyPrompt:
+      "Натисніть на спеціальність, щоб дізнатися більше про програму навчання, кар’єрні перспективи та умови вступу.",
+    admissionsOffice: "Приймальна комісія:",
+    administrationTitle: "Адміністрація — ННІ інформаційних технологій та робототехніки",
+    newsTitle: "Новини — ННІ інформаційних технологій та робототехніки",
+    articleNotFound: "Новину не знайдено",
+    degreeProgram: "Освітня програма",
+    imageStudents: "Студенти",
+    imageRobotics: "Робототехніка",
+    coatOfArms: "Герб Полтавської політехніки",
+  },
+  en: {
+    instituteName: "Educational and Research Institute of Information Technologies and Robotics",
+    openMenu: "Open menu",
+    closeMenu: "Close menu",
+    search: "Search",
+    searchInputLabel: "Search query",
+    searchPlaceholder: "Enter a search query",
+    submitSearch: "Search",
+    clearSearch: "Clear search query",
+    back: "Back",
+    language: "Language",
+    home: "Home",
+    news: "News",
+    moreNews: "More news",
+    latestNews: "Latest News",
+    allNews: "All news",
+    backToNews: "Back to news",
+    newsPagination: "News pagination",
+    moreNewsButton: "More news",
+    previous: "Previous",
+    next: "Next",
+    institute: "Institute",
+    administration: "Institute Administration",
+    readMore: "Read more",
+    academicMobility: "Academic Mobility",
+    academicMobilityDescription:
+      "Academic mobility at Poltava Polytechnic is your chance to go beyond the classroom and explore the world. Exchange programmes, including Erasmus+, allow students to study tuition-free for a semester at leading European universities, experience a new cultural and language environment, make friends from around the world, and gain valuable practical experience for a future career in IT.",
+    heroTitle: "Join a generation of engineers, developers, and innovators",
+    applyNow: "Apply now",
+    specialtyIntro:
+      "The Educational and Research Institute of Information Technologies and Robotics trains highly qualified specialists for today's industries in IT, automation, energy, and transport.",
+    specialtyPrompt:
+      "Select a degree programme to learn more about the curriculum, career prospects, and admission requirements.",
+    admissionsOffice: "Admissions office:",
+    administrationTitle: "Administration — Institute of Information Technologies and Robotics",
+    newsTitle: "News — Institute of Information Technologies and Robotics",
+    articleNotFound: "News article not found",
+    degreeProgram: "Degree programme",
+    imageStudents: "Students",
+    imageRobotics: "Robotics",
+    coatOfArms: "Poltava Polytechnic coat of arms",
+  },
+} as const;
+
+export type MessageKey = keyof typeof messages.uk;
+
+export function translate(locale: Locale, key: MessageKey): string {
+  return messages[locale][key];
+}

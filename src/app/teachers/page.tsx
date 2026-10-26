@@ -4,17 +4,23 @@ import MobileMenu from "@/components/layout/MobileMenu";
 import Footer from "@/components/layout/Footer";
 import AdminCard from "@/components/home/AdminCard";
 import { administration } from "@/data/administration";
+import { getLocale, translate } from "@/lib/i18n";
 
-export const metadata: Metadata = { title: "Адміністрація — ННІ ІТ та робототехніки" };
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  return { title: translate(locale, "administrationTitle") };
+}
 
-export default function TeachersPage() {
+export default async function TeachersPage() {
+  const locale = await getLocale();
+
   return (
     <>
       <Header variant="dark" />
 
       <section className="mx-auto max-w-[1200px] bg-white px-5 py-[60px] font-exo">
         <h1 className="mb-10 text-center font-mont text-[2.5rem] font-bold uppercase text-[#1a1a1a]">
-          Адміністрація інституту
+          {translate(locale, "administration")}
         </h1>
         <div className="mb-[30px] grid grid-cols-[repeat(auto-fit,minmax(min(320px,100%),1fr))] gap-[30px]">
           {administration.map((person) => (

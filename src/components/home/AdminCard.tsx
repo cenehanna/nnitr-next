@@ -1,8 +1,12 @@
 import Image from "next/image";
 import { ArrowRightIcon, EnvelopeIcon, PhoneIcon } from "@heroicons/react/24/outline";
 import type { Person } from "@/data/administration";
+import { getLocale, translate } from "@/lib/i18n";
 
-export default function AdminCard({ person }: { person: Person }) {
+export default async function AdminCard({ person }: { person: Person }) {
+  const locale = await getLocale();
+  const details = locale === "uk" ? person.uk : person;
+
   return (
     <article className="group flex flex-col overflow-hidden rounded-xl border border-[#eef0f2] bg-[#fdfdfd] shadow-[0_4px_15px_rgba(0,0,0,0.03)] transition duration-300 hover:shadow-[0_8px_25px_rgba(0,0,0,0.08)]">
       <div className="relative h-[350px] w-full overflow-hidden bg-[#f4f4f4]">
@@ -17,17 +21,17 @@ export default function AdminCard({ person }: { person: Person }) {
 
       <div className="flex grow flex-col p-[25px]">
         <span className="mb-[15px] self-start rounded-[20px] bg-[#e3f2fd] px-3 py-1 text-[0.8rem] font-semibold uppercase text-[#0d47a1]">
-          {person.badge}
+          {details.badge}
         </span>
         <h2 className="mb-2.5 text-[1.4rem] font-bold leading-[1.3] text-[#111]">
-          {person.surname}
+          {details.surname}
           <br />
-          {person.name}
+          {details.name}
         </h2>
-        <p className="mb-[15px] text-[0.95rem] italic leading-[1.4] text-[#555]">{person.role}</p>
+        <p className="mb-[15px] text-[0.95rem] italic leading-[1.4] text-[#555]">{details.role}</p>
 
         <div className="mb-5 space-y-[5px] border-t border-[#f0f0f0] pt-[15px] text-[0.9rem] text-[#666]">
-          {person.degrees.map((d) => (
+          {details.degrees.map((d) => (
             <p key={d}>{d}</p>
           ))}
         </div>
@@ -45,7 +49,7 @@ export default function AdminCard({ person }: { person: Person }) {
           type="button"
           className="w-full rounded-md border-2 border-[#0d47a1] p-2.5 font-semibold text-[#0d47a1] transition-colors hover:bg-[#0d47a1] hover:text-white"
         >
-          Читати далі <ArrowRightIcon aria-hidden="true" className="ml-1 inline size-4" />
+          {translate(locale, "readMore")} <ArrowRightIcon aria-hidden="true" className="ml-1 inline size-4" />
         </button>
       </div>
     </article>

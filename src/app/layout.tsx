@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Exo_2, Montserrat_Alternates } from "next/font/google";
+import { getLocale, translate } from "@/lib/i18n";
 import "./globals.css";
 
 const exo = Exo_2({
@@ -15,13 +16,21 @@ const mont = Montserrat_Alternates({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: "ННІ інформаційних технологій та робототехніки",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  return {
+    title: translate(locale, "instituteName"),
+    icons: {
+      icon: "/images/favicon.png",
+    },
+  };
+}
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const locale = await getLocale();
+
   return (
-    <html lang="uk" className={`${exo.variable} ${mont.variable}`}>
+    <html lang={locale} className={`${exo.variable} ${mont.variable}`}>
       <body className="bg-white font-exo">{children}</body>
     </html>
   );
