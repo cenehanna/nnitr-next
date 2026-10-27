@@ -21,8 +21,9 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function NewsPage({
   searchParams,
 }: {
-  searchParams: Promise<SearchParams>;
+  searchParams: Promise<{ page?: string; sort?: string }>;
 }) {
+  const { page, sort = "desc" } = await searchParams; // "desc" за замовчуванням
   const locale = await getLocale();
   const news = await getNews();
   const params = await searchParams;
@@ -33,17 +34,23 @@ export default async function NewsPage({
   if (!main) return null;
 
 
-const ITEMS_PER_PAGE = 12;
-const totalItems = rest.length;
-const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE); 
-const currentPage = getCurrentPage(params.page, totalPages);
+  const sortedRest = [...rest].sort((a, b) => {
+    const dateA = new Date(a.publishedAt).getTime();
+    const dateB = new Date(b.publishedAt).getTime();
 
+    return sort === "asc" ? dateA - dateB : dateB - dateA;
+  });
+
+
+const ITEMS_PER_PAGE = 12;
+const totalItems = sortedRest.length;
+  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+  const currentPage = Number(page) || 1;
 
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
-  
-  // Відрізаємо лише ті 9 новин, які потрібні для поточної сторінки
-  const grid = rest.slice(startIndex, endIndex);
+
+  const grid = sortedRest.slice(startIndex, endIndex);
 
   return (
     <>
@@ -75,6 +82,7 @@ const currentPage = getCurrentPage(params.page, totalPages);
   currentPage={currentPage}
   locale={locale}
   searchParams={params}
+  currentSort={sort}
 />
 
       </main>

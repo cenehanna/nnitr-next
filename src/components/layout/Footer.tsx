@@ -16,7 +16,14 @@ export default async function Footer({ hoverClass = "hover:text-brand-yellow" }:
     <footer className="w-full border-t border-white/10 bg-brand-footer px-5 py-10 font-exo text-[15px] leading-[1.4] text-white lg:px-[110px]">
       <div className="mx-auto flex w-full max-w-[1200px] flex-col items-center gap-[30px] text-center lg:flex-row lg:justify-between lg:gap-[30px] lg:text-left">
         <div className="shrink-0">
-          <Image src="/images/nupp_logo.webp" alt={translate(locale, "coatOfArms")} width={110} height={110} className="h-auto w-[110px]" />
+          <Image
+            src="/images/nupp_logo.webp"
+            alt={translate(locale, "coatOfArms")}
+            width={110}
+            height={110}
+            className="w-[110px]"
+            style={{ height: "auto" }}
+          />
         </div>
 
         <div className="flex w-full min-w-[200px] flex-col gap-1.5 lg:flex-1">
